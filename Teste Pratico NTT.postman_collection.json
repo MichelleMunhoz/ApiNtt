@@ -1,0 +1,108 @@
+{
+	"info": {
+		"_postman_id": "fac89677-a676-4b0b-93a9-9917298b4b3e",
+		"name": "Teste Pratico NTT",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "18209649"
+	},
+	"item": [
+		{
+			"name": "Correios",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"pm.variables.set(\"cep\", \"06226002\");"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"if(pm.request.method == 'POST'){\r",
+							"    pm.test(\"Valida se retornou o status 200\", function() {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"    pm.test(\"Valida se o tempo de reposta é inferior a 2s\", function () {\r",
+							"    pm.expect(pm.response.responseTime).to.be.below(2000);\r",
+							"    });\r",
+							"}\r",
+							"    pm.test(\"Valida se o CEP informado tem o tamanho mínimo exigido\", function () {\r",
+							"    var jsonObject = xml2Json(responseBody);\r",
+							"    \r",
+							"      console.log(\"CEP com tamanho mínimo:\",jsonObject['soap:Envelope']['soap:Body']['ns2:consultaCEPResponse']['return']['cep']);\r",
+							"      pm.expect(jsonObject['soap:Envelope']['soap:Body']['ns2:consultaCEPResponse']['return']['cep']).to.have.lengthOf(8);\r",
+							"      \r",
+							"});\r",
+							"\r",
+							"    pm.test(\"Valida se o bairro tem valor de uma String\", function () {\r",
+							"    var jsonObject = xml2Json(responseBody);\r",
+							"\r",
+							"        console.log(\"Bairro deverá ter p valor de uma String:\", jsonObject['soap:Envelope']['soap:Body']['ns2:consultaCEPResponse']['return']['bairro']);\r",
+							"        pm.expect(jsonObject['soap:Envelope']['soap:Body']['ns2:consultaCEPResponse']['return']['bairro']).to.be.a(\"string\");\r",
+							"\r",
+							"    \r",
+							"});\r",
+							"\r",
+							"    pm.test(\"Valida se o cep tem valor de uma String\", function () {\r",
+							"    var jsonObject = xml2Json(responseBody);\r",
+							"\r",
+							"        console.log(\"Cep deverá ter p valor de uma String:\", jsonObject['soap:Envelope']['soap:Body']['ns2:consultaCEPResponse']['return']['cep']);\r",
+							"        pm.expect(jsonObject['soap:Envelope']['soap:Body']['ns2:consultaCEPResponse']['return']['cep']).to.be.a(\"string\");    \r",
+							"\r",
+							"})"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "<Envelope xmlns=\"http://schemas.xmlsoap.org/soap/envelope/\">\r\n    <Body>\r\n        <consultaCEP xmlns=\"http://cliente.bean.master.sigep.bsb.correios.com.br/\">\r\n            <cep xmlns=\"\">{{cep}}</cep>\r\n        </consultaCEP>\r\n    </Body>\r\n</Envelope>",
+					"options": {
+						"raw": {
+							"language": "xml"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{URL}}/SigepMasterJPA/AtendeClienteService/AtendeCliente",
+					"host": [
+						"{{URL}}"
+					],
+					"path": [
+						"SigepMasterJPA",
+						"AtendeClienteService",
+						"AtendeCliente"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "WSDL",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{URL}}/SigepMasterJPA/AtendeClienteService/AtendeCliente",
+					"host": [
+						"{{URL}}"
+					],
+					"path": [
+						"SigepMasterJPA",
+						"AtendeClienteService",
+						"AtendeCliente"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
